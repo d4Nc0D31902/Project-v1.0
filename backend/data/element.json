@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Text",
+    "type": "Text",
+    "createdAt": "2024-07-12T00:00:00.000Z"
+  },
+  {
+    "name": "Email",
+    "type": "Email",
+    "createdAt": "2024-07-12T00:00:00.000Z"
+  },
+  {
+    "name": "Phone",
+    "type": "Number",
+    "createdAt": "2024-07-12T00:00:00.000Z"
+  }
+]
