@@ -16,7 +16,7 @@ import { FaAlignJustify } from "react-icons/fa";
 import { FaAlignRight } from "react-icons/fa";
 import { PiPencilSimpleLine } from "react-icons/pi";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import { IoDocumentTextOutline } from "react-icons/io5";
+import { IoDocumentTextOutline, IoPencil } from "react-icons/io5";
 import {
   Box,
   Paper,
@@ -33,6 +33,29 @@ const Content = () => {
   const [selectedDevice, setSelectedDevice] = useState("laptop");
   const dispatch = useDispatch();
   const { elements, loading, error } = useSelector((state) => state.elements);
+
+  const allElements = [
+    {
+      name: "Text",
+      type: "Text",
+      createdAt: "2024-07-12T00:00:00.000Z",
+    },
+    {
+      name: "Email",
+      type: "Email",
+      createdAt: "2024-07-12T00:00:00.000Z",
+    },
+    {
+      name: "Phone",
+      type: "Number",
+      createdAt: "2024-07-12T00:00:00.000Z",
+    },
+    {
+      name: "Divider",
+      type: "we",
+      createdAt: "2024-07-12T00:00:00.000Z",
+    },
+  ];
 
   useEffect(() => {
     dispatch(getElements());
@@ -65,7 +88,11 @@ const Content = () => {
 
     return (
       <div ref={drag} style={{ cursor: "move" }}>
-        <p>{element.name}</p>
+        <div className="flex flex-row items-center gap-2 grow border border-dashed p-4">
+          <IoDocumentTextOutline size={34} />
+
+          <p className="text-lg">{element.name}</p>
+        </div>
       </div>
     );
   };
@@ -115,7 +142,7 @@ const Content = () => {
                 </div>
 
                 <div className="grid grid-cols-2 grid-rows-auto">
-                  {elements.map((element) => (
+                  {allElements.map((element) => (
                     <DraggableElement key={element._id} element={element} />
                   ))}
                 </div>
@@ -156,18 +183,25 @@ const Content = () => {
           </div>
 
           {/* Center Panel */}
-          <div className="w-3/5 h-full" style={{ padding: "10px" }}>
-            <Paper
-              elevation={6}
-              sx={{
-                ...getPaperStyle(),
-                borderRadius: "20px",
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
-            >
+          <div className="w-3/5 h-full">
+            <div className="w-full h-full space-y-4 p-10">
+              <div>
+                <Input
+                  size="large"
+                  variant="borderless"
+                  defaultValue="Untitled Form"
+                  // suffix={
+                  //   <IoPencil
+                  //     style={{
+                  //       color: "rgba(0,0,0,.45)",
+                  //     }}
+                  //   />
+                  // }
+                />
+              </div>
+
               <MyDropArea />
-            </Paper>
+            </div>
           </div>
 
           {/* Right Panel */}
