@@ -2,12 +2,20 @@ import React, { useState } from "react";
 import { useDrop, useDrag, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { ItemTypes } from "./ItemTypes";
-import { TextField } from "@mui/material";
+import { Input } from "antd";
 
-const DraggableItem = ({ item, index, moveItem }) => {
-  const [, drag] = useDrag({
+const DraggableItem = ({ item, index, moveItem, onDropOutside }) => {
+  const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.ELEMENT,
     item: { index },
+    end: (item, monitor) => {
+      if (!monitor.didDrop()) {
+        onDropOutside(item.index);
+      }
+    },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
   });
 
   const [, drop] = useDrop({
@@ -21,17 +29,33 @@ const DraggableItem = ({ item, index, moveItem }) => {
   });
 
   return (
-    <div
-      ref={(node) => drag(drop(node))}
-      style={{ margin: "10px", flex: "1 1 45%" }}
-    >
-      {item.type === "Text" && <TextField label="Text" fullWidth required />}
-      {item.type === "Number" && (
-        <TextField label="Phone" fullWidth type="number" required />
-      )}
-      {item.type === "Email" && (
-        <TextField label="Email" fullWidth type="email" required />
-      )}
+    <div className="my-4" ref={(node) => drag(drop(node))} style={{ opacity: isDragging ? 0.1 : 1 }}>
+      {item.type === "Text" ? (
+        <div className="space-y-1 cursor-move">
+          <p className="text-xs text-zinc-400">Text</p>
+          <Input size="large" label="Text" required className="p-3 cursor-move col-span-2" />
+        </div>
+      ) : item.type === "Number" ? (
+        <div className="space-y-1 cursor-move">
+          <p className="text-xs text-zinc-400">Phone</p>
+          <Input size="large" label="Text" required className="p-3 cursor-move" />
+        </div>
+      ) : item.type === "Email" ? (
+        <div className="space-y-1 cursor-move">
+          <p className="text-xs text-zinc-400">Email</p>
+          <Input
+            size="large"
+            label="Text"
+            required
+            className="p-3 cursor-move"
+            rules={[
+              {
+                type: "email",
+              },
+            ]}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -46,6 +70,11 @@ const MyDropArea = () => {
     setDroppedItems(updatedItems);
   };
 
+  const removeItem = (index) => {
+    const updatedItems = droppedItems.filter((_, i) => i !== index);
+    setDroppedItems(updatedItems);
+  };
+
   const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.ELEMENT,
     drop: (item) => {
@@ -56,20 +85,17 @@ const MyDropArea = () => {
     }),
   });
 
-  const backgroundColor = isOver ? "rgba(0, 0, 0, 0.1)" : "transparent";
+  const backgroundColor = isOver ? "rgba(0, 0, 0, 0.05)" : "transparent";
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div
         ref={drop}
         style={{
-          width: "100%",
-          height: "100%",
+         
           backgroundColor,
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "2px",
         }}
+        className="p-3 grid grid-cols-2 gap-2"
       >
         {droppedItems.map((item, index) => (
           <DraggableItem
@@ -77,6 +103,7 @@ const MyDropArea = () => {
             index={index}
             item={item}
             moveItem={moveItem}
+            onDropOutside={removeItem}
           />
         ))}
       </div>
