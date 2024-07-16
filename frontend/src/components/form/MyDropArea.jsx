@@ -33,7 +33,7 @@ const DraggableItem = ({ item, index, moveItem, onDropOutside }) => {
       {item.type === "Text" ? (
         <div className="space-y-1 cursor-move">
           <p className="text-xs text-zinc-400">Text</p>
-          <Input size="large" label="Text" required className="p-3 cursor-move col-span-2" />
+          <Input size="large" label="Text" required className="p-3 cursor-move" />
         </div>
       ) : item.type === "Number" ? (
         <div className="space-y-1 cursor-move">
@@ -92,10 +92,11 @@ const MyDropArea = () => {
       <div
         ref={drop}
         style={{
-         
+          width: "100%",
+          height: "100%",
           backgroundColor,
         }}
-        className="p-3 grid grid-cols-2 gap-2"
+        className="p-3"
       >
         {droppedItems.map((item, index) => (
           <DraggableItem
