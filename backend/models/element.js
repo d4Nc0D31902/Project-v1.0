@@ -5,9 +5,14 @@ const elementSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  value: {
+    type: String,
+    required: true,
+  },
   type: {
     type: String,
     required: true,
+    enum: ["General", "Advanced"],
   },
   createdAt: {
     type: Date,

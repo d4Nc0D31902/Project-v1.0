@@ -1,17 +1,26 @@
 [
   {
     "name": "Text",
-    "type": "Text",
+    "value": "Text",
+    "type": "General",
     "createdAt": "2024-07-12T00:00:00.000Z"
   },
   {
     "name": "Email",
-    "type": "Email",
+    "value": "Email",
+    "type": "General",
     "createdAt": "2024-07-12T00:00:00.000Z"
   },
   {
     "name": "Phone",
-    "type": "Number",
+    "value": "Number",
+    "type": "General",
+    "createdAt": "2024-07-12T00:00:00.000Z"
+  },
+  {
+    "name": "Column",
+    "value": "Column",
+    "type": "Advanced",
     "createdAt": "2024-07-12T00:00:00.000Z"
   }
 ]

@@ -38,21 +38,25 @@ const Content = () => {
     {
       name: "Text",
       type: "Text",
+      value: "General",
       createdAt: "2024-07-12T00:00:00.000Z",
     },
     {
       name: "Email",
       type: "Email",
+      value: "General",
       createdAt: "2024-07-12T00:00:00.000Z",
     },
     {
       name: "Phone",
       type: "Number",
+      value: "General",
       createdAt: "2024-07-12T00:00:00.000Z",
     },
     {
-      name: "Divider",
-      type: "we",
+      name: "Column",
+      type: "Column",
+      value: "Advanced",
       createdAt: "2024-07-12T00:00:00.000Z",
     },
   ];
@@ -142,9 +146,11 @@ const Content = () => {
                 </div>
 
                 <div className="grid grid-cols-2 grid-rows-auto">
-                  {allElements.map((element) => (
-                    <DraggableElement key={element._id} element={element} />
-                  ))}
+                  {allElements
+                    .filter((element) => element.value === "General")
+                    .map((element) => (
+                      <DraggableElement key={element._id} element={element} />
+                    ))}
                 </div>
               </div>
 
@@ -153,7 +159,7 @@ const Content = () => {
                 <p className="font-semibold">Advanced</p>
 
                 <div className="grid grid-cols-2 grid-rows-auto">
-                  <div className="flex flex-row items-center gap-2 grow border-r border-b border-dashed p-4">
+                  {/* <div className="flex flex-row items-center gap-2 grow border-r border-b border-dashed p-4">
                     <IoDocumentTextOutline size={34} />
 
                     <p className="text-lg">Spacer</p>
@@ -169,7 +175,12 @@ const Content = () => {
                     <IoDocumentTextOutline size={34} />
 
                     <p className="text-lg">Column</p>
-                  </div>
+                  </div> */}
+                  {allElements
+                    .filter((element) => element.value === "Advanced")
+                    .map((element) => (
+                      <DraggableElement key={element._id} element={element} />
+                    ))}
                 </div>
               </div>
 
