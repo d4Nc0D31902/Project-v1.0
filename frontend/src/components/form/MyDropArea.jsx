@@ -4,133 +4,135 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { ItemTypes } from "./ItemTypes";
 import { Input } from "antd";
 
-const DraggableItem = ({ item, index, moveItem, onDropOutside }) => {
-  console.log("DraggableItem - item:", item);
+  // MyDropArea.js
+  const DraggableItem = ({ item, index, moveItem, onDropOutside }) => {
+    const [{ isDragging }, drag] = useDrag({
+      type: ItemTypes.ELEMENT,
+      item: { index },
+      end: (item, monitor) => {
+        if (!monitor.didDrop()) {
+          onDropOutside(item.index);
+        }
+      },
+      collect: (monitor) => ({
+        isDragging: !!monitor.isDragging(),
+      }),
+    });
 
-  if (!item) {
-    return null; 
-  }
+    const [, drop] = useDrop({
+      accept: ItemTypes.ELEMENT,
+      hover: (draggedItem, monitor) => {
+        if (!monitor.isOver({ shallow: true })) {
+          return;
+        }
+        if (draggedItem.index !== index && item.type !== "Column") {
+          moveItem(draggedItem.index, index);
+          draggedItem.index = index;
+        }
+      },
+    });
 
-  const [{ isDragging }, drag] = useDrag({
-    type: ItemTypes.ELEMENT,
-    item: { index },
-    end: (item, monitor) => {
-      if (!monitor.didDrop()) {
-        onDropOutside(item.index);
-      }
-    },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  });
+    return (
+      <div
+        className="my-2"
+        ref={(node) => drag(drop(node))}
+        style={{ opacity: isDragging ? 0.1 : 1 }}
+      >
+        {item.type === "Column" ? (
+          <div className="bg-zinc-100 hover:bg-zinc-200 ">
+            <div className="flex space-x-4">
+              <div className="px-2 w-full rounded">
+                <DropZone
+                  items={item.contentLeft}
+                  onDropItem={(newItem) => {
+                    const newItems = [...item.contentLeft, newItem];
+                    item.contentLeft = newItems;
+                  }}
+                  onMoveItem={() => {}}
+                  className="px-2 bg-zinc-200 w-full"
+                />
+              </div>
 
-  const [, drop] = useDrop({
-    accept: ItemTypes.ELEMENT,
-    hover: (draggedItem) => {
-      if (draggedItem.index !== index) {
-        moveItem(draggedItem.index, index);
-        draggedItem.index = index;
-      }
-    },
-  });
-
-  return (
-    <div
-      className="my-4"
-      ref={(node) => drag(drop(node))}
-      style={{
-        opacity: isDragging ? 0.1 : 1,
-      }}
-    >
-      {item && (
-        <>
-          {item.type === "Text" ? (
-            <div className="space-y-1 cursor-move">
-              <p className="text-xs text-zinc-400">Text</p>
-              <Input
-                size="large"
-                label="Text"
-                required
-                className="p-3 cursor-move"
-              />
+              <div className="px-2  w-full rounded">
+                <DropZone
+                  items={item.contentRight}
+                  onDropItem={(newItem) => {
+                    const newItems = [...item.contentRight, newItem];
+                    item.contentRight = newItems;
+                  }}
+                  onMoveItem={() => {}}
+                />
+              </div>
             </div>
-          ) : item.type === "Number" ? (
-            <div className="space-y-1 cursor-move">
-              <p className="text-xs text-zinc-400">Phone</p>
-              <Input
-                size="large"
-                label="Text"
-                required
-                className="p-3 cursor-move"
-              />
-            </div>
-          ) : item.type === "Email" ? (
-            <div className="space-y-1 cursor-move">
-              <p className="text-xs text-zinc-400">Email</p>
-              <Input
-                size="large"
-                label="Text"
-                required
-                className="p-3 cursor-move"
-                rules={[
-                  {
-                    type: "email",
-                  },
-                ]}
-              />
-            </div>
-          ) : item.type === "Column" ? (
-            <DroppableColumn />
-          ) : null}
-        </>
-      )}
-    </div>
-  );
-};
-
-const DroppableColumn = () => {
-  const [columnItems, setColumnItems] = useState([]);
-
-  const [, drop] = useDrop({
-    accept: ItemTypes.ELEMENT,
-    drop: (item) => {
-      if (item && item.type && item.type !== "Column") {
-        console.log("DroppableColumn - dropped item:", item);
-        setColumnItems([...columnItems, item]);
-      } else {
-        console.error("DroppableColumn - dropped item is invalid:", item);
-      }
-    },
-  });
-
-  return (
-    <div
-      className="grid grid-cols-2 gap-4 cursor-move p-3 border border-dashed border-gray-300 rounded-3xl max-h-fit"
-      ref={drop}
-    >
-      <div className="p-3">
-        <p className="text-xs text-zinc-400">Column 1</p>
-        {columnItems.map((item, index) => (
-          <DraggableItem
-            key={index}
-            index={index}
-            item={item}
-            moveItem={(fromIndex, toIndex) => {
-              const updatedItems = [...columnItems];
-              const [movedItem] = updatedItems.splice(fromIndex, 1);
-              updatedItems.splice(toIndex, 0, movedItem);
-              setColumnItems(updatedItems);
-            }}
-            onDropOutside={(index) => {
-              setColumnItems(columnItems.filter((_, i) => i !== index));
-            }}
-          />
-        ))}
+          </div>
+        ) : item.type === "Text" ? (
+          <div className="space-y-1 cursor-move hover:bg-zinc-200 p-2">
+            <p className="text-xs text-zinc-400">Text</p>
+            <Input
+              size="large"
+              label="Text"
+              required
+              className="p-3 cursor-move"
+            />
+          </div>
+        ) : item.type === "Number" ? (
+          <div className="space-y-1 cursor-move hover:bg-zinc-200 p-2">
+            <p className="text-xs text-zinc-400">Phone</p>
+            <Input
+              size="large"
+              label="Text"
+              required
+              className="p-3 cursor-move"
+            />
+          </div>
+        ) : item.type === "Email" ? (
+          <div className="space-y-1 cursor-move hover:bg-zinc-200 p-2">
+            <p className="text-xs text-zinc-400">Email</p>
+            <Input
+              size="large"
+              label="Text"
+              required
+              className="p-3 cursor-move"
+              rules={[
+                {
+                  type: "email",
+                },
+              ]}
+            />
+          </div>
+        ) : null}
       </div>
+    );
+  };
+
+// MyDropArea.js
+const DropZone = ({ items, onDropItem, onMoveItem }) => {
+  const [, drop] = useDrop({
+    accept: ItemTypes.ELEMENT,
+    drop: (item, monitor) => {
+      if (monitor.didDrop()) {
+        return;
+      }
+      onDropItem(item);
+    },
+  });
+
+  return (
+    <div ref={drop} className="w-full min-h-16 ">
+      {items.map((item, index) => (
+        <DraggableItem
+          key={index}
+          index={index}
+          item={item}
+          moveItem={onMoveItem}
+          onDropOutside={() => {}}
+        />
+      ))}
     </div>
   );
 };
 
+// MyDropArea.js
 const MyDropArea = () => {
   const [droppedItems, setDroppedItems] = useState([]);
 
@@ -146,11 +148,22 @@ const MyDropArea = () => {
     setDroppedItems(updatedItems);
   };
 
+  const handleDropItem = (newItem) => {
+    if (newItem.type === "Column") {
+      setDroppedItems([
+        ...droppedItems,
+        { type: "Column", contentLeft: [], contentRight: [] },
+      ]);
+    } else {
+      setDroppedItems([...droppedItems, newItem]);
+    }
+  };
+
   const [{ isOver }, drop] = useDrop({
-    accept: ItemTypes.ELEMENT,
-    drop: (item) => {
-      if (item.type === "Column") {
-        setDroppedItems([...droppedItems, item]);
+    accept: [ItemTypes.ELEMENT, ItemTypes.COLUMN],
+    drop: (item, monitor) => {
+      if (!monitor.didDrop()) {
+        handleDropItem(item);
       }
     },
     collect: (monitor) => ({

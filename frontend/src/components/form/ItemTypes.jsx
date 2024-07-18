@@ -1,4 +1,5 @@
+// ItemTypes.js
 export const ItemTypes = {
-  ELEMENT: "element",
-  // Add more types if needed
+  ELEMENT: 'element',
+  COLUMN: 'column',
 };

@@ -34,32 +34,46 @@ const Content = () => {
   const dispatch = useDispatch();
   const { elements, loading, error } = useSelector((state) => state.elements);
 
-  const allElements = [
-    {
-      name: "Text",
-      type: "Text",
-      value: "General",
-      createdAt: "2024-07-12T00:00:00.000Z",
-    },
-    {
-      name: "Email",
-      type: "Email",
-      value: "General",
-      createdAt: "2024-07-12T00:00:00.000Z",
-    },
-    {
-      name: "Phone",
-      type: "Number",
-      value: "General",
-      createdAt: "2024-07-12T00:00:00.000Z",
-    },
-    {
-      name: "Column",
-      type: "Column",
-      value: "Advanced",
-      createdAt: "2024-07-12T00:00:00.000Z",
-    },
-  ];
+ // Content.js
+const allElements = [
+  {
+    name: "Text",
+    type: "Text",
+    createdAt: "2024-07-12T00:00:00.000Z",
+  },
+  {
+    name: "Email",
+    type: "Email",
+    createdAt: "2024-07-12T00:00:00.000Z",
+  },
+  {
+    name: "Phone",
+    type: "Number",
+    createdAt: "2024-07-12T00:00:00.000Z",
+  },
+  {
+    name: "First Name",
+    type: "text",
+    createdAt: "2024-07-12T00:00:00.000Z",
+  },
+  {
+    name: "Last Name",
+    type: "text",
+    createdAt: "2024-07-12T00:00:00.000Z",
+  },
+  {
+    name: "Divider",
+    type: "we",
+    createdAt: "2024-07-12T00:00:00.000Z",
+  },
+  {
+    name: "Column",
+    type: "Column",
+    createdAt: "2024-07-12T00:00:00.000Z",
+  },
+];
+
+  
 
   useEffect(() => {
     dispatch(getElements());
@@ -84,22 +98,24 @@ const Content = () => {
     }
   };
 
-  const DraggableElement = ({ element }) => {
-    const [, drag] = useDrag({
-      type: ItemTypes.ELEMENT,
-      item: { id: element._id, name: element.name, type: element.type },
-    });
+ // Content.js
+const DraggableElement = ({ element }) => {
+  const [, drag] = useDrag({
+    type: element.type === 'Column' ? ItemTypes.COLUMN : ItemTypes.ELEMENT,
+    item: { id: element._id, name: element.name, type: element.type },
+  });
 
-    return (
-      <div ref={drag} style={{ cursor: "move" }}>
-        <div className="flex flex-row items-center gap-2 grow border border-dashed p-4">
-          <IoDocumentTextOutline size={34} />
-
-          <p className="text-lg">{element.name}</p>
-        </div>
+  return (
+    <div ref={drag} style={{ cursor: "move" }}>
+      <div className="flex flex-row items-center gap-2 grow border border-dashed p-4">
+        <IoDocumentTextOutline size={34} />
+        <p className="text-lg">{element.name}</p>
       </div>
-    );
-  };
+    </div>
+  );
+};
+
+  
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -146,11 +162,9 @@ const Content = () => {
                 </div>
 
                 <div className="grid grid-cols-2 grid-rows-auto">
-                  {allElements
-                    .filter((element) => element.value === "General")
-                    .map((element) => (
-                      <DraggableElement key={element._id} element={element} />
-                    ))}
+                  {allElements.map((element) => (
+                    <DraggableElement key={element._id} element={element} />
+                  ))}
                 </div>
               </div>
 
@@ -159,7 +173,7 @@ const Content = () => {
                 <p className="font-semibold">Advanced</p>
 
                 <div className="grid grid-cols-2 grid-rows-auto">
-                  {/* <div className="flex flex-row items-center gap-2 grow border-r border-b border-dashed p-4">
+                  <div className="flex flex-row items-center gap-2 grow border-r border-b border-dashed p-4">
                     <IoDocumentTextOutline size={34} />
 
                     <p className="text-lg">Spacer</p>
@@ -175,12 +189,7 @@ const Content = () => {
                     <IoDocumentTextOutline size={34} />
 
                     <p className="text-lg">Column</p>
-                  </div> */}
-                  {allElements
-                    .filter((element) => element.value === "Advanced")
-                    .map((element) => (
-                      <DraggableElement key={element._id} element={element} />
-                    ))}
+                  </div>
                 </div>
               </div>
 
